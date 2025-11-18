@@ -29,6 +29,12 @@ const courseSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    tags: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Tag'
+        }
+    ],
     courseRatings: [
         {
             userId: { type: String },

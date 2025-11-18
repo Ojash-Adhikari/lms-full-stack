@@ -15,31 +15,36 @@ import { ToastContainer } from 'react-toastify'
 import Player from './pages/student/Player'
 import MyEnrollments from './pages/student/MyEnrollments'
 import Loading from './components/student/Loading'
+import Footer from './components/Navigation/Footer'
 
 const App = () => {
 
   const isEducatorRoute = useMatch('/educator/*');
 
   return (
-    <div className="text-default min-h-screen bg-white">
+    <div className="text-default min-h-screen bg-white flex flex-col">
       <ToastContainer />
       {/* Render Student Navbar only if not on educator routes */}
       {!isEducatorRoute && <Navbar />}
-      <Routes>
+      <main className="flex-1">
+        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/course/:id" element={<CourseDetails />} />
         <Route path="/course-list" element={<CoursesList />} />
         <Route path="/course-list/:input" element={<CoursesList />} />
-        <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/player/:courseId" element={<Player />} />
+        <Route path="/my-enrollments" element={<MyEnrollments />} />
         <Route path="/loading/:path" element={<Loading />} />
+
         <Route path='/educator' element={<Educator />}>
           <Route path='/educator' element={<Dashboard />} />
           <Route path='add-course' element={<AddCourse />} />
           <Route path='my-courses' element={<MyCourses />} />
           <Route path='student-enrolled' element={<StudentsEnrolled />} />
         </Route>
-      </Routes>
+        </Routes>
+      </main>
+      <Footer isEducatorRoute={!!isEducatorRoute} />
     </div>
   )
 }

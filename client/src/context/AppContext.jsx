@@ -17,10 +17,43 @@ export const AppContextProvider = (props) => {
     const { user } = useUser()
 
     const [showLogin, setShowLogin] = useState(false)
-    const [isEducator,setIsEducator] = useState(false)
+    const [isEducator, setIsEducator] = useState(false)
     const [allCourses, setAllCourses] = useState([])
     const [userData, setUserData] = useState(null)
     const [enrolledCourses, setEnrolledCourses] = useState([])
+    const [recommendedCourses, setRecommendedCourses] = useState([]);
+    const [recommendationMessage, setRecommendationMessage] = useState("");
+    const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false);
+
+
+    const fetchRecommendedCourses = async () => {
+        if (!user) {
+            setRecommendedCourses([]);
+            setRecommendationMessage("Sign in to get personalized recommendations!");
+            return;
+        }
+
+        setIsLoadingRecommendations(true);
+        try {
+            const token = await getToken();
+            const { data } = await axios.get(backendUrl + "/api/recommendation/recommendations/", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (data.success) {
+                setRecommendedCourses(data.courses || []);
+                setRecommendationMessage(data.message || "Here are your recommendations");
+            } else {
+                toast.error(data.message || "Failed to load recommendations");
+            }
+        } catch (error) {
+            console.error("Recommendation fetch error:", error);
+            toast.error("Could not load recommendations");
+            setRecommendationMessage("We'll suggest courses soon!");
+        } finally {
+            setIsLoadingRecommendations(false);
+        }
+    };
 
     // Fetch All Courses
     const fetchAllCourses = async () => {
@@ -140,10 +173,14 @@ export const AppContextProvider = (props) => {
     // Fetch User's Data if User is Logged In
     useEffect(() => {
         if (user) {
-            fetchUserData()
-            fetchUserEnrolledCourses()
+            fetchUserData();
+            fetchUserEnrolledCourses();
+            fetchRecommendedCourses(); // This triggers personalized recommendations
+        } else {
+            setRecommendedCourses([]);
+            setRecommendationMessage("Sign in to discover courses just for you!");
         }
-    }, [user])
+    }, [user]);
 
     const value = {
         showLogin, setShowLogin,
@@ -153,7 +190,9 @@ export const AppContextProvider = (props) => {
         enrolledCourses, fetchUserEnrolledCourses,
         calculateChapterTime, calculateCourseDuration,
         calculateRating, calculateNoOfLectures,
-        isEducator,setIsEducator
+        isEducator, setIsEducator,
+        recommendedCourses, recommendationMessage,
+        isLoadingRecommendations, fetchRecommendedCourses,
     }
 
     return (

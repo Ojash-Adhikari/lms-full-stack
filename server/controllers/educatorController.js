@@ -67,7 +67,7 @@ export const getEducatorCourses = async (req, res) => {
 
         const educator = req.auth.userId
 
-        const courses = await Course.find({ educator })
+        const courses = await Course.find({ educator }).populate('tags', 'name')
 
         res.json({ success: true, courses })
 
@@ -76,7 +76,6 @@ export const getEducatorCourses = async (req, res) => {
     }
 }
 
-// Get Educator Dashboard Data ( Total Earning, Enrolled Students, No. of Courses)
 export const educatorDashboardData = async (req, res) => {
     try {
         const educator = req.auth.userId;

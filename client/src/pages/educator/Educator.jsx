@@ -1,8 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import SideBar from '../../components/educator/SideBar'
-import Navbar from '../../components/educator/Navbar'
-import Footer from '../../components/educator/Footer'
+import SideBar from '../../components/Navigation/SideBar'
+import Navbar from '../../components/Navigation/Navbar'
 
 const Educator = () => {
     return (
@@ -14,7 +13,6 @@ const Educator = () => {
                     {<Outlet />}
                 </div>
             </div>
-            <Footer />
         </div>
     )
 }

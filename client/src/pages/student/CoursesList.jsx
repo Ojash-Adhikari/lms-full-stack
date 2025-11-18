@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Footer from '../../components/student/Footer'
 import { assets } from '../../assets/assets'
 import CourseCard from '../../components/student/CourseCard';
 import { AppContext } from '../../context/AppContext';
@@ -50,7 +49,6 @@ const CoursesList = () => {
                     {filteredCourse.map((course, index) => <CourseCard key={index} course={course} />)}
                 </div>
             </div>
-            <Footer />
         </>
     )
 }

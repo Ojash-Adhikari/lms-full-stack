@@ -42,7 +42,8 @@ import profile_img from './profile_img.png'
 import profile_img2 from './profile_img2.png'
 import profile_img3 from './profile_img3.png'
 import lesson_icon from './lesson_icon.svg'
-
+import partialImage from './partialImage.svg'
+import defaultImage from './defualtImage.png'
 
 export const assets = {
     logo,
@@ -73,8 +74,10 @@ export const assets = {
     user_icon,
     home_icon,
     add_icon,
+    partialImage,
     my_course_icon,
     person_tick_icon,
+    defaultImage,
     facebook_icon,
     instagram_icon,
     twitter_icon,

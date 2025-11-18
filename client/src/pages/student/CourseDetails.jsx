@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Footer from '../../components/student/Footer';
 import { assets } from '../../assets/assets';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -217,7 +216,6 @@ const CourseDetails = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   ) : <Loading />
 };

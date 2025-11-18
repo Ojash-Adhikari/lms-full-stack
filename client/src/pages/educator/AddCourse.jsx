@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { assets } from '../../assets/assets';
 import { toast } from 'react-toastify'
+import Select from 'react-select'
 import Quill from 'quill';
 import uniqid from 'uniqid';
 import axios from 'axios'
@@ -18,6 +19,8 @@ const AddCourse = () => {
   const [discount, setDiscount] = useState(0)
   const [image, setImage] = useState(null)
   const [chapters, setChapters] = useState([]);
+  const [tagsList, setTagsList] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [currentChapterId, setCurrentChapterId] = useState(null);
   const [lectureDetails, setLectureDetails] = useState({
@@ -97,6 +100,13 @@ const AddCourse = () => {
 
       if (!image) {
         toast.error('Thumbnail Not Selected')
+        return
+      }
+
+      const selectedTagIds = selectedOptions.map(o => o.value)
+      if (!selectedTagIds || selectedTagIds.length === 0) {
+        toast.error('Please select at least one tag')
+        return
       }
 
       const courseData = {
@@ -105,6 +115,7 @@ const AddCourse = () => {
         coursePrice: Number(coursePrice),
         discount: Number(discount),
         courseContent: chapters,
+        tags: selectedTagIds,
       }
 
       const formData = new FormData()
@@ -144,6 +155,22 @@ const AddCourse = () => {
     }
   }, []);
 
+  // Fetch tags when component mounts
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const { data } = await axios.get(backendUrl + '/api/tag')
+        // If your API responds with { success: true, tags } change accordingly
+        // Here tagRoute returns an array of tags
+        setTagsList(Array.isArray(data) ? data : (data.tags || []))
+      } catch (err) {
+        console.error('Failed to fetch tags', err)
+      }
+    }
+
+    fetchTags()
+  }, [backendUrl])
+
   useEffect(() => {
     console.log(chapters);
   }, [chapters]);
@@ -180,6 +207,26 @@ const AddCourse = () => {
         <div className='flex flex-col gap-1'>
           <p>Discount %</p>
           <input onChange={e => setDiscount(e.target.value)} value={discount} type="number" placeholder='0' min={0} max={100} className='outline-none md:py-2.5 py-2 w-28 px-3 rounded border border-gray-500' required />
+        </div>
+
+        {/* Tags multi-select (required, max 5) - uses react-select */}
+        <div className='flex flex-col gap-1'>
+          <p>Tags <span className='text-xs text-gray-400'>(select 1 to 5)</span></p>
+          <Select
+            options={tagsList.map(t => ({ value: t._id, label: t.name }))}
+            value={selectedOptions}
+            onChange={(opts) => {
+              const chosen = opts || []
+              if (chosen.length > 5) {
+                toast.error('You can select up to 5 tags')
+                return
+              }
+              setSelectedOptions(chosen)
+            }}
+            isMulti
+            closeMenuOnSelect={false}
+            placeholder='Search or select tags'
+          />
         </div>
 
         {/* Adding Chapters & Lectures */}
